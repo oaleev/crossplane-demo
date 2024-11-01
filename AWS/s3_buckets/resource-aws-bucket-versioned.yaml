@@ -1,0 +1,12 @@
+apiVersion: s3.aws.upbound.io/v1beta1
+kind: Bucket
+metadata:
+  name: haiku-bucket-crossplane-versioned
+spec:
+  forProvider:
+    acl: private
+    region: us-east-1
+    versioningConfiguration:
+      status: Enabled
+  providerConfigRef:
+    name: aws-provider

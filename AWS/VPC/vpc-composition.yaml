@@ -1,0 +1,47 @@
+apiVersion: apiextensions.crossplane.io/v1
+kind: Composition
+metadata:
+  name: vpc.aws.manrala.com
+spec:
+  compositeTypeRef:
+    apiVersion: aws.manrala.com/v1alpha1
+    kind: CompositeVPC
+  resources:
+    - name: vpc
+      base:
+        apiVersion: ec2.aws.crossplane.io/v1beta1
+        kind: VPC
+        spec:
+          forProvider:
+            cidrBlock: "10.0.0.0/16"
+          providerConfigRef:
+            name: aws-provider
+      patches:
+        - fromFieldPath: "spec.cidrBlock"
+          toFieldPath: "spec.forProvider.cidrBlock"
+
+    - name: subnet
+      base:
+        apiVersion: ec2.aws.crossplane.io/v1beta1
+        kind: Subnet
+        spec:
+          forProvider:
+            mapPublicIpOnLaunch: true
+        count: "spec.subnetCount"           # Dynamically create the specified number of subnets
+      patches:
+        - fromFieldPath: "metadata.name"
+          toFieldPath: "spec.forProvider.vpcId"
+          type: "FromCompositeFieldPath"
+
+    - name: securitygroup
+      base:
+        apiVersion: ec2.aws.crossplane.io/v1beta1
+        kind: SecurityGroup
+        spec:
+          forProvider:
+            description: "Security group for EKS and other resources"
+        patches:
+          - fromFieldPath: "spec.securityGroupRules"
+            toFieldPath: "spec.forProvider.ingress"
+            type: "FromCompositeFieldPath"
+

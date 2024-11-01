@@ -1,0 +1,23 @@
+apiVersion: aws.manrala.com/v1alpha1
+kind: CompositeVPCClaim
+metadata:
+  name: my-vpc-claim
+  namespace: default
+spec:
+  parameters:
+    cidrBlock: "10.0.0.0/16"
+    subnetCount: 2
+    securityGroupRules:
+      - protocol: "tcp"
+        fromPort: 80
+        toPort: 80
+        cidrBlocks:
+          - "0.0.0.0/0"
+      - protocol: "tcp"
+        fromPort: 443
+        toPort: 443
+        cidrBlocks:
+          - "0.0.0.0/0"
+  compositionSelector:
+    matchLabels:
+      provider: aws

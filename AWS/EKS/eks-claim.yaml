@@ -1,0 +1,20 @@
+apiVersion: aws.manrala.com/v1alpha1
+kind: CompositeEKSClusterClaim
+metadata:
+  name: my-eks-cluster-claim
+  namespace: default
+spec:
+  parameters:
+    clusterName: my-eks-cluster             # Custom cluster name
+    region: us-east-1                       # Region for the cluster
+    version: "1.30"                         # Kubernetes version
+    nodeGroup:
+      instanceType: t3.medium               # Instance type for worker nodes
+      minSize: 2                            # Minimum size of the node group
+      maxSize: 5                            # Maximum size of the node group
+      desiredSize: 3                        # Desired size of the node group
+      diskSize: 50                          # Disk size for worker nodes (in GiB)
+  compositionSelector:
+    matchLabels:
+      provider: aws                         # Matches the label on the Composition
+

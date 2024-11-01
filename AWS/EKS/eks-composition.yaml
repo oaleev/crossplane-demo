@@ -1,0 +1,58 @@
+apiVersion: apiextensions.crossplane.io/v1
+kind: Composition
+metadata:
+  name: ekscluster.aws.manrala.com       # Unique name for this Composition
+spec:
+  compositeTypeRef:
+    apiVersion: aws.manrala.com/v1alpha1 # Matches the CompositeEKSCluster XRD's apiVersion
+    kind: CompositeEKSCluster             # Matches the CompositeEKSCluster XRD's kind
+  resources:
+    - name: ekscluster
+      base:
+        apiVersion: eks.aws.crossplane.io/v1alpha1
+        kind: EKSCluster
+        spec:
+          forProvider:
+            region: us-east-1
+            version: "1.30"
+          providerConfigRef:
+            name: aws-provider                # Refers to a configured AWS provider
+      patches:
+        - fromFieldPath: "spec.clusterName"
+          toFieldPath: "metadata.name"        # Use clusterName for naming
+        - fromFieldPath: "spec.region"
+          toFieldPath: "spec.forProvider.region"
+        - fromFieldPath: "spec.version"
+          toFieldPath: "spec.forProvider.version"
+
+    - name: eksnodegroup
+      base:
+        apiVersion: eks.aws.crossplane.io/v1alpha1
+        kind: NodeGroup
+        spec:
+          forProvider:
+            clusterNameSelector:
+              matchControllerRef: true
+            diskSize: 20                      # Default disk size, can be overridden
+            scalingConfig:
+              minSize: 1
+              maxSize: 3
+              desiredSize: 2
+            nodeRole: "arn:aws:iam::<account-id>:role/eks-node-role" # Replace with actual role ARN
+            instanceType: t3.medium           # Default instance type
+          providerConfigRef:
+            name: aws-provider
+      patches:
+        - fromFieldPath: "spec.clusterName"
+          toFieldPath: "spec.forProvider.clusterName"
+        - fromFieldPath: "spec.nodeGroup.instanceType"
+          toFieldPath: "spec.forProvider.instanceType"
+        - fromFieldPath: "spec.nodeGroup.minSize"
+          toFieldPath: "spec.forProvider.scalingConfig.minSize"
+        - fromFieldPath: "spec.nodeGroup.maxSize"
+          toFieldPath: "spec.forProvider.scalingConfig.maxSize"
+        - fromFieldPath: "spec.nodeGroup.desiredSize"
+          toFieldPath: "spec.forProvider.scalingConfig.desiredSize"
+        - fromFieldPath: "spec.nodeGroup.diskSize"
+          toFieldPath: "spec.forProvider.diskSize"
+

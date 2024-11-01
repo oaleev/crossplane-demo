@@ -1,0 +1,50 @@
+apiVersion: apiextensions.crossplane.io/v1
+kind: CompositeResourceDefinition
+metadata:
+  name: compositeeksclusters.aws.manrala.com
+spec:
+  group: aws.manrala.com                 # Custom API group
+  names:
+    kind: CompositeEKSCluster             # Kind of the composite resource
+    plural: compositeeksclusters          # Plural name of the composite resource
+  scope: Namespaced                       # Indicates this resource is namespaced
+  versions:
+    - name: v1alpha1                      # Version of the XRD
+      served: true
+      referenceable: true
+      schema:
+        openAPIV3Schema:
+          type: object
+          properties:
+            spec:
+              type: object
+              properties:
+                clusterName:
+                  type: string
+                  description: "Name of the EKS cluster"
+                region:
+                  type: string
+                  description: "AWS region where the EKS cluster will be created"
+                version:
+                  type: string
+                  description: "Kubernetes version for the EKS cluster"
+                nodeGroup:
+                  type: object
+                  description: "Configuration for the EKS node group"
+                  properties:
+                    instanceType:
+                      type: string
+                      description: "Instance type for EKS worker nodes"
+                    minSize:
+                      type: integer
+                      description: "Minimum size of the node group"
+                    maxSize:
+                      type: integer
+                      description: "Maximum size of the node group"
+                    desiredSize:
+                      type: integer
+                      description: "Desired size of the node group"
+                    diskSize:
+                      type: integer
+                      description: "Disk size in GiB for the worker nodes"
+

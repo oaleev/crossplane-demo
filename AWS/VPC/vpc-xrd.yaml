@@ -1,0 +1,44 @@
+apiVersion: apiextensions.crossplane.io/v1
+kind: CompositeResourceDefinition
+metadata:
+  name: compositevpcs.aws.manrala .com
+spec:
+  group: aws.manrala  .com
+  names:
+    kind: CompositeVPC
+    plural: compositevpcs
+  scope: Namespaced
+  versions:
+    - name: v1alpha1
+      served: true
+      referenceable: true
+      schema:
+        openAPIV3Schema:
+          type: object
+          properties:
+            spec:
+              type: object
+              properties:
+                cidrBlock:
+                  type: string
+                  description: "CIDR block for the VPC"
+                subnetCount:
+                  type: integer
+                  description: "Number of subnets to create in the VPC"
+                securityGroupRules:
+                  type: array
+                  description: "Security group rules to allow access"
+                  items:
+                    type: object
+                    properties:
+                      protocol:
+                        type: string
+                      fromPort:
+                        type: integer
+                      toPort:
+                        type: integer
+                      cidrBlocks:
+                        type: array
+                        items:
+                          type: string
+
