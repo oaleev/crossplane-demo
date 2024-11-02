@@ -1,0 +1,16 @@
+apiVersion: ec2.aws.upbound.io/v1beta1
+kind: Instance
+metadata:
+  name: web
+spec:
+  forProvider:
+    ami: ami-06b21ccaeff8cd686
+    availabilityZone: us-east-1a
+    instanceType: t2.micro
+    region: us-east-1
+    tags:
+      Name: web
+  initProvider:
+    userData: dXNlcl9kYXRhLnNo
+  providerConfigRef:
+    name: aws-provider-secret
