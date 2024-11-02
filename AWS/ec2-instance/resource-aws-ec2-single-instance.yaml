@@ -1,8 +1,6 @@
 apiVersion: ec2.aws.upbound.io/v1beta1
 kind: Instance
 metadata:
-  labels:
-    testing.upbound.io/instance-name: web
   name: web
 spec:
   forProvider:
@@ -13,4 +11,4 @@ spec:
     tags:
       Name: web
   providerConfigRef:
-    name: aws-provider
+    name: aws-provider-secret
